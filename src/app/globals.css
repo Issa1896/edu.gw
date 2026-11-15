@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* edu.gw — tokens de cor. Inspirados na bandeira da Guiné-Bissau
+   (verde, amarelo, vermelho, estrela negra), com contraste AA. */
+:root {
+  --papel: 247 245 239;       /* fundo da página */
+  --superficie: 255 255 255;  /* cartões, tabelas */
+  --superficie-2: 241 238 229;/* cabeçalhos de tabela, hover */
+  --linha: 222 217 204;       /* bordas */
+  --tinta: 27 31 28;          /* texto principal */
+  --suave: 86 96 90;          /* texto secundário */
+  --verde: 11 93 59;          /* primária */
+  --verde-forte: 7 70 44;     /* primária hover */
+  --verde-claro: 222 240 229; /* fundo de sucesso / seleção */
+  --amarelo: 242 194 48;      /* destaque */
+  --amarelo-claro: 252 243 214;
+  --vermelho: 184 20 45;      /* erro, em atraso, reprovação */
+  --vermelho-claro: 250 228 231;
+  --sobre-verde: 255 255 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --papel: 18 21 19;
+    --superficie: 27 31 28;
+    --superficie-2: 35 40 37;
+    --linha: 55 62 58;
+    --tinta: 236 238 233;
+    --suave: 164 173 167;
+    --verde: 74 186 128;
+    --verde-forte: 104 206 152;
+    --verde-claro: 24 52 38;
+    --amarelo: 242 194 48;
+    --amarelo-claro: 58 49 18;
+    --vermelho: 244 112 128;
+    --vermelho-claro: 64 26 32;
+    --sobre-verde: 10 26 18;
+  }
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: rgb(var(--papel));
+  color: rgb(var(--tinta));
+  font-feature-settings: "tnum" 1;
+}
+
+@layer components {
+  .campo {
+    @apply w-full rounded-md border border-linha bg-superficie px-3 py-2 text-[15px] text-tinta
+           placeholder:text-suave/70 focus:border-verde focus:outline-none focus:ring-2 focus:ring-verde/25
+           disabled:opacity-60;
+  }
+  .rotulo { @apply mb-1 block text-sm font-medium text-tinta; }
+  .ajuda { @apply mt-1 text-xs text-suave; }
+  .tabela { @apply w-full border-collapse text-sm; }
+  .tabela th { @apply border-b border-linha bg-superficie-2 px-3 py-2 text-left font-semibold text-suave; }
+  .tabela td { @apply border-b border-linha px-3 py-2 align-middle; }
+  .tabela tbody tr:hover { @apply bg-superficie-2/60; }
+}
+
+@media print {
+  .nao-imprimir { display: none !important; }
+  body { background: #fff; color: #000; }
+  .folha { box-shadow: none !important; border: none !important; margin: 0 !important; padding: 0 !important; }
+  @page { size: A4; margin: 14mm; }
+}
