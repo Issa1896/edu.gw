@@ -2,11 +2,12 @@ import { Aviso, Botao, Cabecalho, Campo, Cartao, Etiqueta, Vazio } from "@/compo
 import { obterSessao } from "@/lib/sessao";
 import { supabaseServidor } from "@/lib/supabase/server";
 import { data } from "@/lib/formato";
+import Link from "next/link";
 import { apagar, publicar } from "./acoes";
 
 export const metadata = { title: "Comunicados" };
 
-const PUBLICOS: Record<string, string> = { todos: "Todos", professores: "Equipa", encarregados: "Encarregados", turma: "Turma" };
+const PUBLICOS: Record<string, string> = { todos: "Todos (no sistema)", professores: "Equipa", encarregados: "Encarregados", turma: "Turma", publico: "Público (página da escola)" };
 
 export default async function Comunicados({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
   const sp = await searchParams;
@@ -20,7 +21,9 @@ export default async function Comunicados({ searchParams }: { searchParams: Prom
 
   return (
     <>
-      <Cabecalho titulo="Comunicados" />
+      <Cabecalho titulo="Comunicados" subtitulo={gere ? (s.escola.pagina_publica && s.escola.slug
+        ? <>Notícias com destino <strong>Público</strong> aparecem em <Link href={`/escola/${s.escola.slug}`} target="_blank" className="text-verde hover:underline">gwdigitalcompany.com/escola/{s.escola.slug}</Link></>
+        : <>Para publicar notícias abertas a alunos e ao público, ative a página pública em <Link href="/configuracoes" className="text-verde hover:underline">Configurações</Link>.</>) : undefined} />
       <Aviso ok={sp.ok} erro={sp.erro} />
       <div className={`grid gap-6 ${gere ? "lg:grid-cols-3" : ""}`}>
         <div className="space-y-4 lg:col-span-2">
@@ -34,6 +37,9 @@ export default async function Comunicados({ searchParams }: { searchParams: Prom
                 </div>
               </header>
               <p className="mt-3 whitespace-pre-line text-[15px] leading-relaxed">{c.corpo}</p>
+              {c.publico === "publico" && s.escola.slug && s.escola.pagina_publica && (
+                <Link href={`/escola/${s.escola.slug}/${c.id}`} target="_blank" className="mt-3 inline-block text-sm text-verde hover:underline">Ver na página pública ↗</Link>
+              )}
               {gere && <form action={apagar.bind(null, c.id)} className="mt-3"><button className="text-xs text-vermelho hover:underline">Apagar</button></form>}
             </article>
           ))}
@@ -42,10 +48,12 @@ export default async function Comunicados({ searchParams }: { searchParams: Prom
           <Cartao titulo="Novo comunicado">
             <form action={publicar} className="space-y-3">
               <Campo rotulo="Título"><input name="titulo" className="campo" required /></Campo>
+              <Campo rotulo="Resumo (opcional)" ajuda="Para notícias públicas: aparece na lista e ao partilhar no WhatsApp."><input name="resumo" className="campo" maxLength={300} /></Campo>
               <Campo rotulo="Mensagem"><textarea name="corpo" rows={6} className="campo" required /></Campo>
               <Campo rotulo="Destinatários">
                 <select name="publico" className="campo" defaultValue="todos">{Object.entries(PUBLICOS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
               </Campo>
+              <Campo rotulo="Imagem (opcional, link https)" ajuda="Só nas notícias públicas."><input name="imagem_url" className="campo" placeholder="https://…" /></Campo>
               <Campo rotulo="Turma (se destinatário = Turma)">
                 <select name="turma_id" className="campo" defaultValue=""><option value="">—</option>{(turmas ?? []).map((t) => <option key={t.id} value={t.id}>{t.nome}</option>)}</select>
               </Campo>

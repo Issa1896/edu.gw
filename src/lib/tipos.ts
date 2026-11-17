@@ -14,6 +14,9 @@ export type Escola = {
   diretor: string | null;
   moeda: string;
   nota_minima: number;
+  slug: string | null;
+  pagina_publica: boolean;
+  descricao: string | null;
 };
 
 export type Perfil = {

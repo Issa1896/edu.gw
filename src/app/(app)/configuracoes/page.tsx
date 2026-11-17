@@ -3,7 +3,9 @@ import { exigirPapel } from "@/lib/sessao";
 import { supabaseServidor } from "@/lib/supabase/server";
 import { data } from "@/lib/formato";
 import { REGIOES } from "@/lib/tipos";
-import { apagarDisciplina, guardarEscola, novaDisciplina, novoAno, tornarAtual } from "./acoes";
+import Link from "next/link";
+import { apagarDisciplina, guardarEscola, guardarPaginaPublica, novaDisciplina, novoAno, tornarAtual } from "./acoes";
+import { slugificar } from "@/lib/markdown";
 
 export const metadata = { title: "Configurações" };
 
@@ -44,6 +46,21 @@ export default async function Configuracoes({ searchParams }: { searchParams: Pr
             <Campo rotulo="Diretor(a)" ajuda="Aparece nos boletins."><input name="diretor" defaultValue={e.diretor ?? ""} className="campo" /></Campo>
             <Campo rotulo="Nota mínima de aprovação" ajuda="Escala 0–20."><input type="number" name="nota_minima" min={0} max={20} step={0.5} defaultValue={e.nota_minima} className="campo" /></Campo>
             <div className="sm:col-span-2"><Botao>Guardar</Botao></div>
+          </form>
+        </Cartao>
+
+        <Cartao titulo="Página pública da escola">
+          <form action={guardarPaginaPublica} className="space-y-3">
+            <p className="text-sm text-suave">Uma página aberta a alunos, pais e público, com as notícias que publicar em Comunicados com o destino <strong>Público</strong>. Não mostra dados de alunos.</p>
+            <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" name="pagina_publica" defaultChecked={e.pagina_publica} className="h-4 w-4" /> Página pública ativa</label>
+            <Campo rotulo="Endereço" ajuda="Só letras minúsculas, números e hífenes.">
+              <div className="flex items-center gap-1 text-sm"><span className="text-suave">…/escola/</span><input name="slug" defaultValue={e.slug ?? slugificar(e.sigla ?? e.nome)} className="campo" required /></div>
+            </Campo>
+            <Campo rotulo="Apresentação curta"><textarea name="descricao" rows={3} defaultValue={e.descricao ?? ""} className="campo" placeholder="Ex.: Escola de ensino básico e secundário no bairro de Belém, desde 1998." /></Campo>
+            <div className="flex flex-wrap items-center gap-3">
+              <Botao variante="secundario">Guardar</Botao>
+              {e.pagina_publica && e.slug && <Link href={`/escola/${e.slug}`} target="_blank" className="text-sm text-verde hover:underline">Abrir a página ↗</Link>}
+            </div>
           </form>
         </Cartao>
 

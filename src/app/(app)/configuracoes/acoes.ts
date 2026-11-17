@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { supabaseServidor } from "@/lib/supabase/server";
 import { exigirPapel } from "@/lib/sessao";
 import { texto } from "@/lib/formato";
+import { slugificar } from "@/lib/markdown";
 
 const ok = (m: string) => redirect("/configuracoes?ok=" + encodeURIComponent(m));
 const erro = (m: string) => redirect("/configuracoes?erro=" + encodeURIComponent(m));
@@ -58,4 +59,18 @@ export async function apagarDisciplina(id: string) {
   const { error } = await supabase.from("disciplinas").delete().eq("id", id);
   if (error) erro(error.message);
   ok("Disciplina removida.");
+}
+
+export async function guardarPaginaPublica(fd: FormData) {
+  const s = await exigirPapel("admin");
+  const supabase = await supabaseServidor();
+  const slug = slugificar(texto(fd, "slug") ?? s.escola.sigla ?? s.escola.nome);
+  if (!slug) erro("Indique o endereço da página.");
+  const { error } = await supabase.from("escolas").update({
+    slug, pagina_publica: fd.get("pagina_publica") === "on", descricao: texto(fd, "descricao"),
+  }).eq("id", s.escola.id);
+  if (error) erro(error.code === "23505" ? "Esse endereço já está a ser usado por outra escola." : error.message);
+  revalidatePath(`/escola/${slug}`);
+  revalidatePath("/escolas");
+  ok("Página pública atualizada.");
 }

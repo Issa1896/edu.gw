@@ -10,6 +10,7 @@ export function Site({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4">
           <Link href="/"><Marca /></Link>
           <nav className="flex items-center gap-1 text-sm font-medium sm:gap-2">
+            <Link href="/escolas" className="rounded-md px-3 py-2 hover:bg-superficie-2">Escolas</Link>
             <Link href="/blog" className="rounded-md px-3 py-2 hover:bg-superficie-2">Blog</Link>
             <Link href="/verificar" className="hidden rounded-md px-3 py-2 hover:bg-superficie-2 sm:inline">Verificar declaração</Link>
             <BotaoLink href="/entrar" variante="secundario">Entrar</BotaoLink>
@@ -22,6 +23,7 @@ export function Site({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-4 px-4 py-8 text-xs text-suave">
           <span>© {new Date().getFullYear()} edu.gw · GW Digital Company</span>
           <span className="flex gap-4">
+            <Link href="/escolas" className="hover:underline">Escolas</Link>
             <Link href="/blog" className="hover:underline">Blog</Link>
             <Link href="/verificar" className="hover:underline">Verificar declaração</Link>
           </span>
