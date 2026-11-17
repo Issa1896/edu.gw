@@ -5,6 +5,7 @@ import { supabaseServidor } from "@/lib/supabase/server";
 import { boletins, situacao } from "@/lib/avaliacao";
 import { dinheiro, mesAno, nota } from "@/lib/formato";
 import { mesesVencidos, propinaDevida, type MatFin } from "@/lib/financas";
+import { TIPOS_DECLARACAO, type TipoDeclaracao } from "@/lib/declaracoes";
 
 export const metadata = { title: "Os meus educandos" };
 
@@ -25,9 +26,10 @@ export default async function Portal() {
       {mats.length === 0 && <Vazio titulo="Ainda não há educandos associados à sua conta">Contacte a secretaria da escola.</Vazio>}
       <div className="space-y-8">
         {await Promise.all(mats.map(async (m) => {
-          const [b, { data: pags }] = await Promise.all([
+          const [b, { data: pags }, { data: decls }] = await Promise.all([
             boletins([m.id], m.turma_id),
             supabase.from("pagamentos").select("id, tipo, mes_referencia, numero_recibo, valor").eq("matricula_id", m.id).order("numero_recibo", { ascending: false }),
+            supabase.from("declaracoes").select("id, tipo, codigo, emitida_em").eq("matricula_id", m.id).is("anulada_em", null).order("emitida_em", { ascending: false }),
           ]);
           const linhas = b.porMat[m.id];
           const sit = situacao(linhas, minima);
@@ -60,6 +62,16 @@ export default async function Portal() {
                     </tbody>
                   </Tabela>
                 </div>
+                <div className="space-y-4">
+                {(decls ?? []).length > 0 && (
+                  <Cartao titulo="Declarações">
+                    <ul className="divide-y divide-linha text-sm">
+                      {decls!.map((d) => (
+                        <li key={d.id} className="py-1.5"><Link href={`/declaracoes/${d.id}`} className="text-verde hover:underline">{TIPOS_DECLARACAO[d.tipo as TipoDeclaracao].nome}</Link> <span className="text-xs text-suave">· {d.codigo}</span></li>
+                      ))}
+                    </ul>
+                  </Cartao>
+                )}
                 <Cartao titulo="Recibos">
                   {(pags ?? []).length === 0 ? <p className="text-sm text-suave">Sem pagamentos.</p> : (
                     <ul className="divide-y divide-linha text-sm">
@@ -72,6 +84,7 @@ export default async function Portal() {
                     </ul>
                   )}
                 </Cartao>
+                </div>
               </div>
             </section>
           );

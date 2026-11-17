@@ -7,6 +7,8 @@ import { data, dinheiro, idade, mesAno, nota } from "@/lib/formato";
 import { ESTADOS_MATRICULA, METODOS } from "@/lib/tipos";
 import { CamposEncarregado } from "../campos";
 import { adicionarEncarregado, atualizarMatricula, convidarEncarregado, matricular } from "../acoes";
+import { emitirDeclaracao } from "../../declaracoes/acoes";
+import { TIPOS_DECLARACAO, type TipoDeclaracao } from "@/lib/declaracoes";
 
 export const metadata = { title: "Ficha do aluno" };
 
@@ -39,6 +41,10 @@ export default async function FichaAluno({ params, searchParams }: { params: Pro
     financas && atual ? supabase.from("pagamentos").select("*").eq("matricula_id", atual.id).order("data_pagamento", { ascending: false }) : Promise.resolve({ data: [] }),
   ]);
   const { data: disciplinas } = await supabase.from("disciplinas").select("id, nome");
+  const emiteDecl = ["admin", "secretaria", "financeiro"].includes(s.perfil.papel);
+  const { data: declaracoes } = emiteDecl
+    ? await supabase.from("declaracoes").select("id, codigo, tipo, emitida_em, anulada_em, matricula_id").in("matricula_id", mats.map((m) => m.id)).order("emitida_em", { ascending: false })
+    : { data: [] };
   const nomeDisc = Object.fromEntries((disciplinas ?? []).map((d) => [d.id, d.nome]));
   const totalFaltas = faltas.data?.length ?? 0;
   const injust = (faltas.data ?? []).filter((f: { justificada: boolean }) => !f.justificada).length;
@@ -157,6 +163,32 @@ export default async function FichaAluno({ params, searchParams }: { params: Pro
               </details>
             )}
           </Cartao>
+
+          {emiteDecl && (
+            <Cartao titulo="Declarações">
+              {atual ? (
+                <form action={emitirDeclaracao.bind(null, id, atual.id)} className="grid items-end gap-3 sm:grid-cols-[1.4fr_1fr_auto]">
+                  <Campo rotulo="Tipo">
+                    <select name="tipo" className="campo" defaultValue={s.perfil.papel === "financeiro" ? "quitacao" : "matricula"}>
+                      {Object.entries(TIPOS_DECLARACAO).filter(([k]) => s.perfil.papel !== "financeiro" || k === "quitacao").map(([k, v]) => <option key={k} value={k}>{v.nome}</option>)}
+                    </select>
+                  </Campo>
+                  <Campo rotulo="Finalidade (opcional)"><input name="finalidade" className="campo" placeholder="Ex.: efeitos de bolsa de estudo" /></Campo>
+                  <Botao>Emitir</Botao>
+                </form>
+              ) : <p className="text-sm text-suave">Matricule o aluno no ano atual para emitir declarações.</p>}
+              {(declaracoes ?? []).length > 0 && (
+                <ul className="mt-4 divide-y divide-linha text-sm">
+                  {declaracoes!.map((d) => (
+                    <li key={d.id} className="flex items-center justify-between gap-3 py-2">
+                      <Link href={`/declaracoes/${d.id}`} className="text-verde hover:underline">{TIPOS_DECLARACAO[d.tipo as TipoDeclaracao].nome}</Link>
+                      <span className="flex items-center gap-2 text-xs text-suave"><span className="font-mono">{d.codigo}</span> · {data(d.emitida_em)} {d.anulada_em && <Etiqueta tom="perigo">Anulada</Etiqueta>}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Cartao>
+          )}
 
           {financas && atual && (
             <Cartao titulo="Pagamentos" acao={<Link className="text-sm text-verde hover:underline" href={`/financas/pagamento?matricula=${atual.id}`}>Registar</Link>}>

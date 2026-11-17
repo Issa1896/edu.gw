@@ -1,4 +1,8 @@
-import { BotaoLink, Marca } from "@/components/ui";
+import Link from "next/link";
+import { BotaoLink } from "@/components/ui";
+import { Site } from "@/components/site";
+import { supabaseServidor } from "@/lib/supabase/server";
+import { data } from "@/lib/formato";
 
 const MODULOS = [
   ["Matrículas e processos", "Ficha completa do aluno, encarregados, línguas faladas em casa, transferências e histórico por ano letivo."],
@@ -7,18 +11,17 @@ const MODULOS = [
   ["Propinas em FCFA", "Mensalidades por classe, bolsas, recibos numerados, Orange Money e MTN MoMo, lista de atrasos."],
   ["Boletins imprimíveis", "Boletim trimestral e anual em A4, com assinatura da direção e do encarregado."],
   ["Portal do encarregado", "Pais e encarregados acompanham notas, faltas, pagamentos e comunicados pelo telemóvel."],
+  ["Declarações digitais", "Declarações de matrícula, aproveitamento, conclusão e quitação, com código QR que qualquer pessoa pode verificar."],
+  ["Assistente com IA", "Pergunte em português ou kriol: quem está em atraso, como lançar notas, como imprimir boletins."],
+  ["Blog e novidades", "Dicas de gestão escolar e novidades do sistema, publicadas pela equipa edu.gw."],
 ];
 
-export default function Inicio() {
+export default async function Inicio() {
+  const supabase = await supabaseServidor();
+  const { data: artigos } = await supabase.from("artigos").select("slug, titulo, resumo, publicado_em").eq("publicado", true).order("publicado_em", { ascending: false }).limit(3);
   return (
+    <Site>
     <main>
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5">
-        <Marca />
-        <div className="flex gap-2">
-          <BotaoLink href="/entrar" variante="secundario">Entrar</BotaoLink>
-          <BotaoLink href="/registar">Registar escola</BotaoLink>
-        </div>
-      </header>
       <section className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:pt-20">
         <div className="mb-6 flex h-1.5 w-24 overflow-hidden rounded-full" aria-hidden>
           <span className="flex-1 bg-vermelho" /><span className="flex-1 bg-amarelo" /><span className="flex-1 bg-verde" />
@@ -45,7 +48,24 @@ export default function Inicio() {
           ))}
         </div>
       </section>
-      <footer className="mx-auto max-w-6xl px-4 py-8 text-xs text-suave">© {new Date().getFullYear()} edu.gw · Bissau</footer>
+      {(artigos ?? []).length > 0 && (
+        <section className="mx-auto max-w-6xl px-4 py-12">
+          <div className="mb-6 flex items-end justify-between">
+            <h2 className="font-titulo text-2xl font-bold">Do nosso blog</h2>
+            <Link href="/blog" className="text-sm font-medium text-verde hover:underline">Ver todos</Link>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {artigos!.map((a) => (
+              <Link key={a.slug} href={`/blog/${a.slug}`} className="rounded-lg border border-linha bg-superficie p-5 hover:border-verde">
+                <p className="text-xs text-suave">{data(a.publicado_em)}</p>
+                <h3 className="mt-1 font-semibold">{a.titulo}</h3>
+                {a.resumo && <p className="mt-2 line-clamp-3 text-sm text-suave">{a.resumo}</p>}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
+    </Site>
   );
 }

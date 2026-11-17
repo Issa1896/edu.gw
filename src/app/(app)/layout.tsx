@@ -4,6 +4,7 @@ import { Navegacao, type ItemNav } from "@/components/navegacao";
 import { obterSessao } from "@/lib/sessao";
 import { NOMES_PAPEL, type Papel } from "@/lib/tipos";
 import { sair } from "@/app/(auth)/acoes";
+import { Assistente } from "@/components/assistente";
 
 const MENU: (ItemNav & { papeis: Papel[] })[] = [
   { href: "/painel", rotulo: "Painel", papeis: ["admin", "secretaria", "professor", "financeiro"] },
@@ -14,6 +15,7 @@ const MENU: (ItemNav & { papeis: Papel[] })[] = [
   { href: "/faltas", rotulo: "Faltas", papeis: ["admin", "secretaria", "professor"] },
   { href: "/boletins", rotulo: "Boletins e pautas", papeis: ["admin", "secretaria", "professor"] },
   { href: "/financas", rotulo: "Propinas", papeis: ["admin", "secretaria", "financeiro"] },
+  { href: "/declaracoes", rotulo: "Declarações", papeis: ["admin", "secretaria", "financeiro"] },
   { href: "/comunicados", rotulo: "Comunicados", papeis: ["admin", "secretaria", "professor", "financeiro", "encarregado"] },
   { href: "/equipa", rotulo: "Equipa", papeis: ["admin", "secretaria"] },
   { href: "/configuracoes", rotulo: "Configurações", papeis: ["admin"] },
@@ -22,6 +24,7 @@ const MENU: (ItemNav & { papeis: Papel[] })[] = [
 export default async function LayoutApp({ children }: { children: React.ReactNode }) {
   const s = await obterSessao();
   const itens = MENU.filter((m) => m.papeis.includes(s.perfil.papel)).map(({ href, rotulo }) => ({ href, rotulo }));
+  if (s.plataformaAdmin) itens.push({ href: "/plataforma/blog", rotulo: "Blog (GW Digital)" });
 
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[248px_1fr]">
@@ -47,6 +50,7 @@ export default async function LayoutApp({ children }: { children: React.ReactNod
           <form action={sair}><button className="text-vermelho">Sair</button></form>
         </footer>
       </main>
+      <Assistente modo="interno" />
     </div>
   );
 }

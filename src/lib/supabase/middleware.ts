@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLICAS = ["/entrar", "/registar", "/recuperar", "/auth"];
+const PUBLICAS = ["/entrar", "/registar", "/recuperar", "/auth", "/blog", "/verificar", "/api/chat"];
 
 export async function atualizarSessao(request: NextRequest) {
   let resposta = NextResponse.next({ request });

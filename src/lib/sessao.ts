@@ -9,6 +9,7 @@ export type Sessao = {
   perfil: Perfil;
   escola: Escola;
   ano: AnoLetivo | null;
+  plataformaAdmin: boolean;
 };
 
 /** Sessão do utilizador autenticado, com perfil, escola e ano letivo atual. */
@@ -29,12 +30,13 @@ export const obterSessao = cache(async (): Promise<Sessao> => {
   if (!perfil) redirect("/configurar");
   if (!perfil.ativo) redirect("/entrar?erro=inativo");
 
-  const [{ data: escola }, { data: ano }] = await Promise.all([
+  const [{ data: escola }, { data: ano }, { data: plat }] = await Promise.all([
     supabase.from("escolas").select("*").eq("id", perfil.escola_id).single(),
     supabase.from("anos_letivos").select("*").eq("atual", true).maybeSingle(),
+    supabase.rpc("e_plataforma_admin"),
   ]);
 
-  return { userId: user.id, email: user.email ?? null, perfil, escola: escola!, ano };
+  return { userId: user.id, email: user.email ?? null, perfil, escola: escola!, ano, plataformaAdmin: plat === true };
 });
 
 /** Garante que o utilizador tem um dos papéis; caso contrário volta ao painel. */

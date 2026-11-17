@@ -19,6 +19,9 @@ Funciona no telemóvel e no computador, é leve (≈106 kB de JavaScript por pá
 | **Equipa** | Convites por email com papel (direção, secretaria, professor, tesouraria), ativar/desativar contas | Direção |
 | **Portal do encarregado** | Notas, média, faltas, propinas em falta, recibos e boletim dos seus educandos | Encarregados |
 | **Configurações** | Dados da escola (aparecem nos boletins e recibos), anos letivos, disciplinas, nota mínima | Direção |
+| **Declarações digitais** | Matrícula/frequência, aproveitamento, conclusão de classe e quitação de propinas; A4 com código QR; anulação com motivo; verificação pública em `/verificar` | Secretaria, direção (tesouraria: quitação) |
+| **Assistente IA** | No site: apresenta o edu.gw a escolas interessadas. No sistema: explica como usar cada módulo e consulta dados (alunos, notas, faltas, propinas) respeitando as permissões de cada papel | Todos |
+| **Blog** | Artigos públicos em `/blog`, escritos pela equipa GW Digital em *Blog (GW Digital)* | Equipa da plataforma |
 
 ### Regras adotadas (ajustáveis)
 
@@ -81,6 +84,26 @@ select carregar_demo((select id from escolas where nome = 'Nome da escola'));
 ```
 
 Use uma escola de demonstração separada; não execute numa escola real.
+
+## Declarações digitais
+
+Cada declaração guarda uma fotografia dos dados no momento da emissão e recebe um código de 10 caracteres. O QR no rodapé abre `/verificar/<código>`, que mostra a qualquer pessoa se o documento é autêntico, o texto original e se foi anulado. Regras: conclusão só com aluno aprovado e notas do 3.º trimestre; quitação só sem propinas vencidas.
+
+## Assistente com IA
+
+1. Crie uma conta em [console.anthropic.com](https://console.anthropic.com), adicione crédito e crie uma *API key*.
+2. Na Vercel → *Settings → Environment Variables*, adicione `ANTHROPIC_API_KEY` (tipo **Secret**). Opcional: `CONTACTO_VENDAS` (ex.: `WhatsApp +245 9xx xxx xxx`).
+3. Faça *Redeploy*.
+
+Sem chave, o botão aparece mas responde que o assistente ainda não está ativo. Limites para controlar o custo: 25 mensagens/dia por visitante, 600/dia no site inteiro, 80/dia por utilizador com sessão (em `src/app/api/chat/route.ts`). O modelo padrão é `claude-haiku-5-5`.
+
+## Blog
+
+Só utilizadores na tabela `plataforma_admins` veem *Blog (GW Digital)* no menu. Para dar acesso a outra pessoa (depois de ela criar conta):
+
+```sql
+insert into plataforma_admins (user_id) select id from auth.users where email = 'pessoa@exemplo.com';
+```
 
 ## Estrutura
 
