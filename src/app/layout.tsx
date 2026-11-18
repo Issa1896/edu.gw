@@ -22,11 +22,32 @@ const titulo = localFont({
   display: "swap",
 });
 
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://gwdigitalcompany.com").replace(/\/$/, "");
+const DESCRICAO = "Sistema de gestão escolar para escolas da Guiné-Bissau: matrículas, notas de 0 a 20, faltas, boletins, propinas em FCFA com Orange Money e MTN MoMo, declarações com QR e portal do encarregado.";
+
 export const metadata: Metadata = {
-  title: { default: "edu.gw — Gestão Escolar", template: "%s · edu.gw" },
-  description: "Sistema de gestão escolar para escolas da Guiné-Bissau: matrículas, notas, faltas, propinas e comunicação com encarregados.",
-  manifest: "/manifest.webmanifest",
+  metadataBase: new URL(SITE),
+  title: { default: "edu.gw — Sistema de gestão escolar para a Guiné-Bissau", template: "%s · edu.gw" },
+  description: DESCRICAO,
   applicationName: "edu.gw",
+  manifest: "/manifest.webmanifest",
+  keywords: ["gestão escolar", "software escolar", "Guiné-Bissau", "Bissau", "escola", "matrículas", "notas", "boletins", "propinas", "FCFA", "edu.gw", "GW Digital Company"],
+  authors: [{ name: "GW Digital Company" }],
+  openGraph: {
+    type: "website",
+    locale: "pt_GW",
+    siteName: "edu.gw",
+    url: SITE,
+    title: "edu.gw — A secretaria da sua escola, organizada e no telemóvel",
+    description: DESCRICAO,
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "edu.gw — gestão escolar para a Guiné-Bissau" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og.png"] },
+  robots: { index: true, follow: true },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    other: process.env.BING_SITE_VERIFICATION ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION } : undefined,
+  },
 };
 
 export const viewport: Viewport = { themeColor: "#0B5D3B", width: "device-width", initialScale: 1 };

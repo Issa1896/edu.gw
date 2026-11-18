@@ -16,11 +16,31 @@ const MODULOS = [
   ["Blog e novidades", "Dicas de gestão escolar e novidades do sistema, publicadas pela equipa edu.gw."],
 ];
 
+export const metadata = { alternates: { canonical: "/" } };
+
 export default async function Inicio() {
   const supabase = await supabaseServidor();
   const { data: artigos } = await supabase.from("artigos").select("slug, titulo, resumo, publicado_em").eq("publicado", true).order("publicado_em", { ascending: false }).limit(3);
+  const ld = {
+    "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "Organization", name: "GW Digital Company", url: "https://gwdigitalcompany.com", logo: "https://gwdigitalcompany.com/icons/icon.svg" },
+      {
+        "@type": "SoftwareApplication",
+        name: "edu.gw",
+        applicationCategory: "EducationalApplication",
+        operatingSystem: "Web, Android, iOS",
+        inLanguage: "pt",
+        areaServed: { "@type": "Country", name: "Guiné-Bissau" },
+        description: "Sistema de gestão escolar para escolas da Guiné-Bissau: matrículas, notas, faltas, boletins, propinas em FCFA, declarações digitais e portal do encarregado.",
+        url: "https://gwdigitalcompany.com",
+        publisher: { "@type": "Organization", name: "GW Digital Company" },
+      },
+    ],
+  };
   return (
     <Site>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, "\\u003c") }} />
     <main>
       <section className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:pt-20">
         <div className="mb-6 flex h-1.5 w-24 overflow-hidden rounded-full" aria-hidden>

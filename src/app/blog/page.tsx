@@ -4,7 +4,7 @@ import { Vazio } from "@/components/ui";
 import { supabaseServidor } from "@/lib/supabase/server";
 import { data } from "@/lib/formato";
 
-export const metadata = { title: "Blog", description: "Novidades do edu.gw e ideias para a gestão das escolas da Guiné-Bissau." };
+export const metadata = { title: "Blog", alternates: { canonical: "/blog" }, description: "Novidades do edu.gw e ideias para a gestão das escolas da Guiné-Bissau." };
 export const revalidate = 300;
 
 export default async function Blog({ searchParams }: { searchParams: Promise<Record<string, string>> }) {

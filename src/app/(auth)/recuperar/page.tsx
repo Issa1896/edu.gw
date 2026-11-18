@@ -1,7 +1,7 @@
 import { Botao, Campo } from "@/components/ui";
 import { recuperar } from "../acoes";
 
-export const metadata = { title: "Recuperar acesso" };
+export const metadata = { title: "Recuperar acesso", robots: { index: false } };
 
 export default function Recuperar() {
   return (

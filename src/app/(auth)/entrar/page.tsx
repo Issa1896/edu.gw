@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Aviso, Botao, Campo } from "@/components/ui";
 import { entrar } from "../acoes";
 
-export const metadata = { title: "Entrar" };
+export const metadata = { title: "Entrar", robots: { index: false } };
 
 export default async function Entrar({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
   const sp = await searchParams;

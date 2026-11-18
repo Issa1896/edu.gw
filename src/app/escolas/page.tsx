@@ -5,7 +5,7 @@ import { supabaseServidor } from "@/lib/supabase/server";
 import { data } from "@/lib/formato";
 import { REGIOES } from "@/lib/tipos";
 
-export const metadata = { title: "Escolas", description: "Notícias e informações das escolas que usam o edu.gw na Guiné-Bissau." };
+export const metadata = { title: "Escolas", alternates: { canonical: "/escolas" }, description: "Notícias e informações das escolas que usam o edu.gw na Guiné-Bissau." };
 export const revalidate = 300;
 
 type E = { slug: string; nome: string; regiao: string; tipo: string; descricao: string | null; noticias: number; ultima: string | null };

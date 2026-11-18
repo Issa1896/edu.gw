@@ -22,6 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!n) return { title: "Notícia não encontrada" };
   return {
     title: `${n.titulo} · ${n.escola}`,
+    alternates: { canonical: `/escola/${n.slug}/${n.id}` },
     description: n.resumo ?? n.corpo.slice(0, 160),
     openGraph: { title: n.titulo, description: n.resumo ?? n.corpo.slice(0, 160), type: "article", images: n.imagem_url ? [n.imagem_url] : undefined },
   };

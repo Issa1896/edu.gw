@@ -23,7 +23,7 @@ async function escola(slug: string) {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const e = await escola((await params).slug);
   if (!e) return { title: "Escola não encontrada" };
-  return { title: e.nome, description: e.descricao ?? `Notícias e avisos de ${e.nome}.` };
+  return { title: e.nome, description: e.descricao ?? `Notícias e avisos de ${e.nome}.`, alternates: { canonical: `/escola/${e.slug}` } };
 }
 
 export default async function PaginaEscola({ params }: { params: Promise<{ slug: string }> }) {

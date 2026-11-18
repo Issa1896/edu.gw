@@ -13,5 +13,5 @@ export async function middleware(request: NextRequest) {
 export const config = {
   // Corre em Node.js (e não no Edge), onde a biblioteca do Supabase funciona sem limitações.
   runtime: "nodejs",
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|icons/|.*\\.(?:svg|png|jpg|jpeg|webp)$).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.svg|robots.txt|sitemap.xml|og.png|manifest.webmanifest|icons/|.*\\.(?:svg|png|jpg|jpeg|webp)$).*)"],
 };
