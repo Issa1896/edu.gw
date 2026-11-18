@@ -10,7 +10,7 @@ export function Navegacao({ itens }: { itens: ItemNav[] }) {
   return (
     <nav className="flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
       {itens.map((i) => {
-        const ativo = caminho === i.href || caminho.startsWith(i.href + "/");
+        const ativo = caminho === i.href || (caminho.startsWith(i.href + "/") && !itens.some((o) => o.href !== i.href && o.href.length > i.href.length && caminho.startsWith(o.href)));
         return (
           <Link
             key={i.href}

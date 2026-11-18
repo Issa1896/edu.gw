@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { supabasePublico } from "@/lib/supabase/publico";
+import { FUNCIONALIDADES } from "@/lib/funcionalidades";
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://gwdigitalcompany.com").replace(/\/$/, "");
 export const revalidate = 3600;
@@ -11,6 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE}/escolas`, changeFrequency: "daily", priority: 0.8 },
     { url: `${SITE}/registar`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE}/verificar`, changeFrequency: "yearly", priority: 0.4 },
+    ...FUNCIONALIDADES.map((f) => ({ url: `${SITE}/funcionalidades/${f.slug}`, changeFrequency: "monthly" as const, priority: 0.7 })),
   ];
   try {
     const supabase = supabasePublico();

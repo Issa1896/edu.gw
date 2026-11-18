@@ -3,18 +3,9 @@ import { BotaoLink } from "@/components/ui";
 import { Site } from "@/components/site";
 import { supabaseServidor } from "@/lib/supabase/server";
 import { data } from "@/lib/formato";
+import { FUNCIONALIDADES } from "@/lib/funcionalidades";
 
-const MODULOS = [
-  ["Matrículas e processos", "Ficha completa do aluno, encarregados, línguas faladas em casa, transferências e histórico por ano letivo."],
-  ["Notas por trimestre", "Escala de 0 a 20, lançamento por turma e disciplina, médias automáticas e pautas prontas a afixar."],
-  ["Faltas e assiduidade", "Chamada diária ou por disciplina, faltas justificadas e alertas de excesso."],
-  ["Propinas em FCFA", "Mensalidades por classe, bolsas, recibos numerados, Orange Money e MTN MoMo, lista de atrasos."],
-  ["Boletins imprimíveis", "Boletim trimestral e anual em A4, com assinatura da direção e do encarregado."],
-  ["Portal do encarregado", "Pais e encarregados acompanham notas, faltas, pagamentos e comunicados pelo telemóvel."],
-  ["Declarações digitais", "Declarações de matrícula, aproveitamento, conclusão e quitação, com código QR que qualquer pessoa pode verificar."],
-  ["Assistente com IA", "Pergunte em português ou kriol: quem está em atraso, como lançar notas, como imprimir boletins."],
-  ["Blog e novidades", "Dicas de gestão escolar e novidades do sistema, publicadas pela equipa edu.gw."],
-];
+
 
 export const metadata = { alternates: { canonical: "/" } };
 
@@ -58,14 +49,18 @@ export default async function Inicio() {
           <BotaoLink href="/entrar" variante="secundario">Já tenho conta</BotaoLink>
         </div>
       </section>
-      <section className="border-t border-linha bg-superficie">
-        <div className="mx-auto grid max-w-6xl gap-px px-4 py-12 sm:grid-cols-2 lg:grid-cols-3">
-          {MODULOS.map(([t, d]) => (
-            <div key={t} className="p-5">
-              <h2 className="font-semibold">{t}</h2>
-              <p className="mt-2 text-sm text-suave">{d}</p>
-            </div>
-          ))}
+      <section id="funcionalidades" className="scroll-mt-4 border-t border-linha bg-superficie">
+        <div className="mx-auto max-w-6xl px-4 py-12">
+          <h2 className="mb-6 font-titulo text-2xl font-bold">O que o edu.gw faz pela sua escola</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {FUNCIONALIDADES.map((f) => (
+              <Link key={f.slug} href={`/funcionalidades/${f.slug}`} className="group rounded-lg border border-linha bg-papel p-5 transition hover:border-verde hover:bg-superficie">
+                <h3 className="font-semibold group-hover:text-verde">{f.titulo}</h3>
+                <p className="mt-2 text-sm text-suave">{f.resumo}</p>
+                <p className="mt-3 text-sm font-medium text-verde">Saber mais →</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
       {(artigos ?? []).length > 0 && (

@@ -24,7 +24,7 @@ const MENU: (ItemNav & { papeis: Papel[] })[] = [
 export default async function LayoutApp({ children }: { children: React.ReactNode }) {
   const s = await obterSessao();
   const itens = MENU.filter((m) => m.papeis.includes(s.perfil.papel)).map(({ href, rotulo }) => ({ href, rotulo }));
-  if (s.plataformaAdmin) itens.push({ href: "/plataforma/blog", rotulo: "Blog (GW Digital)" });
+  if (s.plataformaAdmin) itens.push({ href: "/plataforma", rotulo: "Plataforma (GW Digital)" });
 
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[248px_1fr]">

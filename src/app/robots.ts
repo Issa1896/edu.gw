@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
-      allow: ["/", "/blog", "/escolas", "/escola/", "/registar"],
+      allow: ["/", "/blog", "/escolas", "/escola/", "/funcionalidades/", "/registar"],
       // Área privada das escolas e páginas de verificação individuais: fora dos motores de busca
       disallow: [
         "/painel", "/alunos", "/turmas", "/notas", "/faltas", "/boletins", "/financas", "/declaracoes",
